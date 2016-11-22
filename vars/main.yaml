@@ -1,2 +1,28 @@
 ---
 
+base_path:              "/opt/oracle"
+instantclient_path:     "{{ base_path }}/instantclient"
+oracle_include_path:    "{{ base_path }}/include"
+oracle_client_version:  "12.1.0.2.0"
+oracle_library_version: "12.1"
+unzip_path:             "instantclient_12_1"
+
+
+arch_folders:
+  x86:              x32
+  x32:              x32
+  x64:              x64
+  x86_64:           x64
+
+dist_folders:
+  Ubuntu:           linux
+  Debian:           linux
+  CentOS:           linux
+  MacOS:            macos
+  Windows:          win
+
+driver_types:
+  linux:            so
+  macos:            dylib
+  win:              dll
+

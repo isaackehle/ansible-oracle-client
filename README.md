@@ -4,12 +4,27 @@ Script to setup Oracle client/library files
 
 Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/pgkehle/oracle-client)
 
+# Variables
+
+    client_pkg_dir: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
+                    Example: 
+                        ~/downloads/oracle/client
+                        ~/downloads/oracle/client/linux
+                        ~/downloads/oracle/client/linux/x64
+                        ~/downloads/oracle/client/macos
+                        ~/downloads/oracle/client/macos/x64
+                        ~/downloads/oracle/client/win
+                        ~/downloads/oracle/client/win/x64
+    
 
 # Examples
 
 ```YAML
 
   - hosts: all
+
+    vars: 
+      client_pkg_dir: ~/downloads/oracle/client
   
     roles:
       - pgkehle.oracle-client
@@ -26,3 +41,10 @@ Paul Kehle
 
 ### References
 
+Download [Instant Client from Oracle](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html):
+* [MacOS x64](http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html)
+* [Linux x64](http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html)
+    
+#### Official OracleDB Node Package
+* https://github.com/oracle/node-oracledb/blob/master/INSTALL.md#instosx
+* https://github.com/oracle/node-oracledb/tree/master/examples
