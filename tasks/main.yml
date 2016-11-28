@@ -1,7 +1,7 @@
 ---
 
-  - fail: msg="Please define local client_pkg_dir variable"
-    when: client_pkg_dir == ""
+#  - fail: msg="Please define local client_pkg_dir variable"
+#    when: client_pkg_dir == ""
 
   - name: Ensure packages are installed
     apt:
@@ -13,6 +13,7 @@
       - unzip
       - gzip
       - libaio1
+    when: client_pkg_dir != ""
 
   - set_fact:
       dist: "{{ dist_folders[ansible_distribution] }}"
@@ -34,7 +35,7 @@
     register: p
 
   - fail: msg="Path exists and is a directory"
-    when: not p.stat.isdir is defined or p.stat.isdir|bool == false
+    when: client_pkg_dir != "" and (not p.stat.isdir is defined or p.stat.isdir|bool == false)
 
   - name: Create folders
     file: path={{ item }} state=directory owner=root group=root mode=0755
@@ -54,6 +55,7 @@
     tags:
       - archive
       - zip
+    when: client_pkg_dir != ""
 
   - name: Link base folders
     file:
@@ -66,6 +68,7 @@
       - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
     tags:
       - link
+    when: client_pkg_dir != ""
 
   - name: Link libraries to give versionless file
     file:
@@ -78,6 +81,7 @@
       - "libocci"
     tags:
       - link
+    when: client_pkg_dir != ""
 
   - name: Define libraries in /etc/environment
     become: true
@@ -93,6 +97,7 @@
       marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
     tags:
       - variables
+    when: client_pkg_dir != ""
 
   - name: Save system files
     template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
@@ -102,11 +107,11 @@
       - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
     tags:
       - variables
+    when: client_pkg_dir != ""
 
   - shell: ldconfig
     become: true
-    when:
-      - false
+    when: client_pkg_dir != ""
 
 #    nano /tmp/ocicheck.sh
 #    chmod a+x /tmp/ocicheck.sh
