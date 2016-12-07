@@ -1,0 +1,82 @@
+---
+- name: Create folders (local)
+  local_action: file path={{ base_path }} state=directory
+  become: true
+
+- name: Unarchive client files
+  local_action:
+    module: unarchive
+    src: "{{ client_path }}/{{ item }}"
+    dest: "{{ base_path }}"
+  become: true
+  with_items:
+    - instantclient-basic-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-sdk-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-sqlplus-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+  tags:
+    - archive
+    - zip
+  when:
+    - client_pkg_dir != ""
+    - dist is defined
+    - arch is defined
+    - oracle_client_version is defined
+
+- name: Link base folders
+  local_action:
+    module: file
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  become: true
+  with_items:
+    - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
+    - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
+  tags:
+    - link
+  when: client_pkg_dir != ""
+
+- name: Link libraries to give versionless file
+  local_action:
+    module: file
+    src: "./{{ item }}.{{ driver }}.{{ oracle_library_version }}"
+    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
+    state: link
+  become: true
+  with_items:
+    - "libclntsh"
+    - "libocci"
+  tags:
+    - link
+  when: client_pkg_dir != ""
+
+- name: Define libraries in ~/.zshrc
+  become: true
+  local_action:
+    module: blockinfile
+    dest: ~/.zshrc
+    block: |
+      OCI_HOME={{ instantclient_path }}
+      OCI_LIB_DIR={{ instantclient_path }}
+      OCI_INC_DIR={{ oracle_include_path }}
+      OCI_INCLUDE_DIR={{ oracle_include_path }}
+      LD_LIBRARY_PATH={{ instantclient_path }}
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
+  tags:
+    - variables
+  when: client_pkg_dir != ""
+
+#- name: Save system files
+#  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
+#  become: true
+#  with_items:
+#    - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
+#    - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
+#  tags:
+#    - variables
+#  when: client_pkg_dir != ""
+#
+#- shell: ldconfig
+#  become: true
+#  when: client_pkg_dir != ""
