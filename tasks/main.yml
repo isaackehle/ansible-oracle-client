@@ -14,14 +14,14 @@
 
 
   - set_fact:
-      cp_type: "remote"
+      incl_type: "remote"
     when: gather_facts == true
 
   - set_fact:
-      cp_type: "local"
+      incl_type: "local"
     when: gather_facts == false
 
-  - debug: var=cp_type
+  - debug: var=incl_type
 
   - name: Ensure packages are installed
     apt:
@@ -37,6 +37,7 @@
 
   - set_fact:
       driver: "{{ driver_types[dist] }}"
+      lib_path: "{{ lib_paths[dist] }}"
 
   - fail: msg="Couldn't do the dist var"
     when: not dist is defined or dist == ""
@@ -59,8 +60,7 @@
   - fail: msg="Path exists and is a directory"
     when: client_pkg_dir != "" and (not p.stat.isdir is defined or p.stat.isdir|bool == false)
 
-  - name: Configure Wordpress Apache
-    include: ./client.{{ cp_type }}.yml
+  - include: ./client.{{ incl_type }}.yml
 
 
 #    nano /tmp/ocicheck.sh

@@ -1,8 +1,9 @@
 ---
 
-base_path:              "/opt/oracle"
-instantclient_path:     "{{ base_path }}/instantclient"
-oracle_include_path:    "{{ base_path }}/include"
+oracle_path:            "/opt/oracle"
+instantclient_path:     "{{ oracle_path }}/instantclient"
+oracle_include_path:    "{{ oracle_path }}/include"
+tns_admin_path:         "{{ instantclient_path }}/network/admin"
 oracle_client_version:  "12.1.0.2.0"
 oracle_library_version: "12.1"
 unzip_path:             "instantclient_12_1"
@@ -26,3 +27,6 @@ driver_types:
   macos:            dylib
   win:              dll
 
+lib_paths:
+  linux:            LD_LIBRARY_PATH
+  macos:            DYLD_LIBRARY_PATH

@@ -1,18 +1,22 @@
 ---
 - name: Create folders
-  file: path={{ base_path }} state=directory owner=root group=root mode=0755
+  file: path={{ oracle_path }} state=directory owner=root group=root mode=0755
   become: true
   when: gather_facts|bool == true
 
 - name: Unarchive client files
   unarchive:
     src: "{{ client_path }}/{{ item }}"
-    dest: "{{ base_path }}"
+    dest: "{{ oracle_path }}"
   become: true
   with_items:
     - instantclient-basic-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-basiclite-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
     - instantclient-sdk-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
     - instantclient-sqlplus-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-jdbc-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-odbc-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+    - instantclient-tools-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
   tags:
     - archive
     - zip
@@ -57,7 +61,7 @@
       OCI_LIB_DIR={{ instantclient_path }}
       OCI_INC_DIR={{ oracle_include_path }}
       OCI_INCLUDE_DIR={{ oracle_include_path }}
-      LD_LIBRARY_PATH={{ instantclient_path }}
+      {{ lib_path }}={{ instantclient_path }}
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   tags:
