@@ -4,9 +4,6 @@ oracle_path:            "/opt/oracle"
 instantclient_path:     "{{ oracle_path }}/instantclient"
 oracle_include_path:    "{{ oracle_path }}/include"
 tns_admin_path:         "{{ instantclient_path }}/network/admin"
-oracle_client_version:  "12.1.0.2.0"
-oracle_library_version: "12.1"
-unzip_path:             "instantclient_12_1"
 
 
 arch_folders:
@@ -30,3 +27,27 @@ driver_types:
 lib_paths:
   linux:            LD_LIBRARY_PATH
   macos:            DYLD_LIBRARY_PATH
+
+client_versions:
+  linux:            "12.1.0.2.0"
+  macos:            "12.1.0.2.0"
+#  macos:            "11.2.0.4.0"
+
+lib_versions:
+  linux:            "12.1"
+  macos:            "12.1"
+#  macos:            "11.2"
+
+file_versions:
+  linux:            "12.1"
+  macos:            "12.1"
+#  macos:            "11.1"
+
+packages: 
+  - basic
+  - basiclite
+  - sdk
+  - sqlplus
+  - jdbc
+#  - odbc
+  - tools

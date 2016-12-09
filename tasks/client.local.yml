@@ -1,20 +1,25 @@
 ---
+- name: Kill old folders
+  local_action: file path={{ oracle_path }} state=absent
+
 - name: Create folders (local)
   local_action: file path={{ oracle_path }} state=directory
+
+- set_fact:
+    filenames: []
+
+- set_fact:
+    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{client_version}}.zip' ]"
+  with_items: "{{packages}}"
+
+#- debug: var=filenames
 
 - name: Unarchive client files
   local_action:
     module: unarchive
     src: "{{ client_path }}/{{ item }}"
     dest: "{{ oracle_path }}"
-  with_items:
-    - instantclient-basic-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-basiclite-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-sdk-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-sqlplus-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-jdbc-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-odbc-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
-    - instantclient-tools-{{ dist }}.{{ arch }}-{{ oracle_client_version }}.zip
+  with_items: "{{filenames}}"
   tags:
     - archive
     - zip
@@ -22,7 +27,7 @@
     - client_pkg_dir != ""
     - dist is defined
     - arch is defined
-    - oracle_client_version is defined
+    - client_version is defined
 
 - name: Link base folders
   local_action:
@@ -40,7 +45,7 @@
 - name: Link libraries to give versionless file
   local_action:
     module: file
-    src: "./{{ item }}.{{ driver }}.{{ oracle_library_version }}"
+    src: "./{{ item }}.{{ driver }}.{{ file_version }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
     state: link
   with_items:

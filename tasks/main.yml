@@ -12,6 +12,11 @@
   - debug: var=dist
   - debug: var=arch
 
+  - fail: msg="Couldn't do the dist var"
+    when: not dist is defined or dist == ""
+
+  - fail: msg="Couldn't do the arch var"
+    when: not arch is defined or arch == ""
 
   - set_fact:
       incl_type: "remote"
@@ -36,23 +41,25 @@
     when: client_pkg_dir != "" and dist == "linux"
 
   - set_fact:
-      driver: "{{ driver_types[dist] }}"
-      lib_path: "{{ lib_paths[dist] }}"
-
-  - fail: msg="Couldn't do the dist var"
-    when: not dist is defined or dist == ""
-
-  - fail: msg="Couldn't do the arch var"
-    when: not arch is defined or arch == ""
+      driver:           "{{ driver_types[dist] }}"
+      lib_path:         "{{ lib_paths[dist] }}"
+      client_version:   "{{ client_versions[dist] }}"
+      lib_version:      "{{ lib_versions[dist] }}"
+      file_version:     "{{ file_versions[dist] }}"
+      client_path:      "{{ client_pkg_dir }}/{{ dist }}/{{ arch }}"
 
   - set_fact:
-      client_path: "{{ client_pkg_dir }}/{{ dist }}/{{ arch }}"
+      unzip_path:       "instantclient_{{ lib_version | regex_replace( \"\\.\", \"_\" ) }}"
+
+#  - debug: var=client_version
+#  - debug: var=lib_version
+#  - debug: var=client_path
+#  - debug: var=unzip_path
 
   - local_action: stat path={{ client_path }}
     register: p
 
-  - debug: var=client_path
-  - debug: var=p
+#  - debug: var=p
 
   - fail: msg="Path does not exist"
     when: client_pkg_dir != "" and (p.stat.exists is defined and p.stat.exists|bool == false)
