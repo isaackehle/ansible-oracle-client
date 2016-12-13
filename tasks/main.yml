@@ -4,7 +4,7 @@
 #    when: client_pkg_dir == ""
 
   - set_fact:
-      gather_facts: "{{not is_local_host is defined and is_local_host == true}}"
+      gather_facts: not is_local_host is defined and is_local_host == true
       dist: "{{ dist_folders[ansible_distribution] }}"
       arch: "{{ arch_folders[ansible_architecture] }}"
 
@@ -18,13 +18,13 @@
   - fail: msg="Couldn't do the arch var"
     when: not arch is defined or arch == ""
 
-  - set_fact:
-      incl_type: "remote"
-    when: gather_facts == true
+#  - set_fact:
+#      incl_type: "remote"
+#    when: gather_facts is defined and gather_facts == true
 
   - set_fact:
       incl_type: "local"
-    when: gather_facts == false
+    when: gather_facts is defined and gather_facts == false
 
   - debug: var=incl_type
 
