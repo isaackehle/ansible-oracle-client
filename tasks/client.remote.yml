@@ -6,7 +6,6 @@
 - name: Create folders
   file: path={{ oracle_path }} state=directory owner=root group=root mode=0755
   become: true
-#  when: gather_facts|bool == true
 
 - set_fact:
     filenames: []
