@@ -15,11 +15,8 @@
 #- debug: var=filenames
 
 - name: Unarchive client files
-  local_action:
-    module: unarchive
-    src: "{{ client_path }}/{{ item }}"
-    dest: "{{ oracle_path }}"
-  with_items: "{{filenames}}"
+  local_action: unarchive src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
+  with_items: "{{ filenames }}"
   tags:
     - archive
     - zip
@@ -30,11 +27,7 @@
     - client_version is defined
 
 - name: Link base folders
-  local_action:
-    module: file
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
+  local_action: file src="{{ item.src }}" dest="{{ item.dest }}" state=link
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
@@ -43,11 +36,7 @@
   when: client_pkg_dir != ""
 
 - name: Link libraries to give versionless file
-  local_action:
-    module: file
-    src: "./{{ item }}.{{ driver }}.{{ file_version }}"
-    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
-    state: link
+  local_action: file src="./{{ item }}.{{ driver }}.{{ file_version }}" dest="{{ instantclient_path }}/{{ item }}.{{ driver }}" state=link
   with_items:
     - "libclntsh"
     - "libocci"
@@ -63,7 +52,6 @@
   with_items:
     - tnsnames.ora
     - sqlnet.ora
-
 
 - name: Define libraries in ~/.zshrc
   local_action:
@@ -85,15 +73,3 @@
   tags:
     - variables
   when: client_pkg_dir != ""
-
-#- name: Save system files
-#  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
-##  with_items:
-#    - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
-#    - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
-#  tags:
-#    - variables
-#  when: client_pkg_dir != ""
-#
-#- shell: ldconfig
-##  when: client_pkg_dir != ""

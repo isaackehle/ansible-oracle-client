@@ -6,29 +6,31 @@ Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/
 
 # Variables
 
-    client_pkg_dir: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
-                    Example: 
-                        ~/downloads/oracle/client
-                        ~/downloads/oracle/client/linux
-                        ~/downloads/oracle/client/linux/x64
-                        ~/downloads/oracle/client/macos
-                        ~/downloads/oracle/client/macos/x64
-                        ~/downloads/oracle/client/win
-                        ~/downloads/oracle/client/win/x64
-    
+```bash
+client_pkg_dir: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
+
+Example: 
+    ~/downloads/oracle/client
+    ~/downloads/oracle/client/linux
+    ~/downloads/oracle/client/linux/x64
+    ~/downloads/oracle/client/macos
+    ~/downloads/oracle/client/macos/x64
+    ~/downloads/oracle/client/win
+    ~/downloads/oracle/client/win/x64
+```  
 
 # Examples
 
-```YAML
+```yaml
+- hosts: all
 
-  - hosts: all
+vars: 
+  client_pkg_dir: ~/downloads/oracle/client
+  do_install: true
+  gather_facts: "{{ansible_host != 'localhost'}}"
 
-    vars: 
-      client_pkg_dir: ~/downloads/oracle/client
-      do_install: true
-    
-    roles:
-      - pgkehle.oracle-client
+roles:
+  - pgkehle.oracle-client
 ```
 
 ## License
