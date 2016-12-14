@@ -25,7 +25,8 @@ Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/
 
     vars: 
       client_pkg_dir: ~/downloads/oracle/client
-  
+      do_install: true
+    
     roles:
       - pgkehle.oracle-client
 ```

@@ -1,0 +1,99 @@
+---
+- name: Kill old folders
+  local_action: file path={{ oracle_path }} state=absent
+
+- name: Create folders (local)
+  local_action: file path={{ oracle_path }} state=directory
+
+- set_fact:
+    filenames: []
+
+- set_fact:
+    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{client_version}}.zip' ]"
+  with_items: "{{packages}}"
+
+#- debug: var=filenames
+
+- name: Unarchive client files
+  local_action:
+    module: unarchive
+    src: "{{ client_path }}/{{ item }}"
+    dest: "{{ oracle_path }}"
+  with_items: "{{filenames}}"
+  tags:
+    - archive
+    - zip
+  when:
+    - client_pkg_dir != ""
+    - dist is defined
+    - arch is defined
+    - client_version is defined
+
+- name: Link base folders
+  local_action:
+    module: file
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
+    - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
+  tags:
+    - link
+  when: client_pkg_dir != ""
+
+- name: Link libraries to give versionless file
+  local_action:
+    module: file
+    src: "./{{ item }}.{{ driver }}.{{ file_version }}"
+    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
+    state: link
+  with_items:
+    - "libclntsh"
+    - "libocci"
+  tags:
+    - link
+  when: client_pkg_dir != ""
+
+- name: Make TNS_ADMIN directory
+  local_action: file path={{ tns_admin_path }} state=directory
+
+- name: Link .ora files
+  local_action: file src="~/Documents/{{ item }}" dest="{{ tns_admin_path }}/{{ item }}" state=link
+  with_items:
+    - tnsnames.ora
+    - sqlnet.ora
+
+
+- name: Define libraries in ~/.zshrc
+  local_action:
+    module: blockinfile
+    dest: ~/.zshrc
+    block: |
+      ORACLE_HOME={{ oracle_path }}
+      OCI_HOME={{ instantclient_path }}
+      PATH+={{ instantclient_path }}
+      OCI_LIB_DIR={{ instantclient_path }}
+      OCI_INC_DIR={{ oracle_include_path }}
+      OCI_INCLUDE_DIR={{ oracle_include_path }}
+      TNS_ADMIN={{ tns_admin_path }}
+      CLASS_PATH=$CLASSPATH:$ORACLE_HOME
+      {{ lib_path }}={{ instantclient_path }}
+#      NLS_LANG="English_Australia.UTF8"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
+  tags:
+    - variables
+  when: client_pkg_dir != ""
+
+#- name: Save system files
+#  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
+##  with_items:
+#    - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
+#    - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
+#  tags:
+#    - variables
+#  when: client_pkg_dir != ""
+#
+#- shell: ldconfig
+##  when: client_pkg_dir != ""

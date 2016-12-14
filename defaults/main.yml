@@ -1,3 +1,7 @@
 ---
 
-client_pkg_dir: ""
+client_pkg_dir:   ""
+is_local_host:    false
+incl_type:        "remote"
+dist:             ""
+arch:             ""
