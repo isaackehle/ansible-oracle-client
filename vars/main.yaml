@@ -30,18 +30,18 @@ lib_paths:
 
 client_versions:
   linux:            "12.1.0.2.0"
-  macos:            "12.1.0.2.0"
-#  macos:            "11.2.0.4.0"
+#  macos:            "12.1.0.2.0"
+  macos:            "11.2.0.4.0"
 
 lib_versions:
   linux:            "12.1"
-  macos:            "12.1"
-#  macos:            "11.2"
+#  macos:            "12.1"
+  macos:            "11_2"
 
 file_versions:
   linux:            "12.1"
-  macos:            "12.1"
-#  macos:            "11.1"
+#  macos:            "12.1"
+  macos:            "11.1"
 
 packages: 
   - basic

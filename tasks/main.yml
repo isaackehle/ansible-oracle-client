@@ -40,17 +40,22 @@
     client_version:   "{{ client_versions[dist] }}"
     lib_version:      "{{ lib_versions[dist] }}"
     file_version:     "{{ file_versions[dist] }}"
-    client_path:      "{{ client_pkg_dir }}/{{ dist }}/{{ arch }}"
+    client_base:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}"
 
 - set_fact:
-    unzip_path:       "instantclient_{{ lib_version | regex_replace( \"\\.\", \"_\" ) }}"
+    client_path:      "{{ client_base }}/{{ dist }}/{{ arch }}"
+
+
+- set_fact:
+    unzip_path:       "instantclient_{{ lib_version }}"
 
 #  - debug: var=client_version
 #  - debug: var=lib_version
 #  - debug: var=client_path
 #  - debug: var=unzip_path
 
-- local_action: stat path={{ client_path }}
+- stat: path={{ client_path }}
+  connection: local
   register: p
 
 #  - debug: var=p
