@@ -34,9 +34,10 @@ client_versions:
   macos:            "11.2.0.4.0"
 
 lib_versions:
-  linux:            "12.1"
-#  macos:            "12.1"
+  linux:            "12_1"
   macos:            "11_2"
+#  linux:            "12.1"
+#  macos:            "12.1"
 
 file_versions:
   linux:            "12.1"
