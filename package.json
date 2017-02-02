@@ -1,6 +1,6 @@
 {
   "name": "ansible-oracle-client",
-  "version": "1.0.0",
+  "version": "0.9.9",
   "description": "Setup Oracle client/library files",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
