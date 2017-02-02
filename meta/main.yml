@@ -1,6 +1,6 @@
 galaxy_info:
   author: Paul Kehle <twitter.com/pgkehle>
-  description: Script to setup Oracle client/library files
+  description: Setup Oracle client/library files
   company: pgkehle
   license: MIT
   min_ansible_version: 1.9

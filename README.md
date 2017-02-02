@@ -1,6 +1,6 @@
 # Ansible: oracle-client
 
-Script to setup Oracle client/library files
+Setup Oracle client/library files
 
 Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/pgkehle/oracle-client)
 
