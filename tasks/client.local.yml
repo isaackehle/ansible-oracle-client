@@ -2,14 +2,12 @@
 - name: Kill old folders
   connection: local
   file: path={{ oracle_path }} state=absent
-  when:
-    - client_pkg_dir != ""
+  
 
 - name: Create folders (local)
   connection: local   
   file: path={{ oracle_path }} state=directory
-  when:
-    - client_pkg_dir != ""
+  
 
 - set_fact:
     filenames: []
@@ -24,11 +22,7 @@
   connection: local   
   unarchive:  src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
   with_items: "{{ filenames }}"
-  tags:
-    - archive
-    - zip
   when:
-    - client_pkg_dir != ""
     - dist is defined
     - arch is defined
     - client_version is defined
@@ -39,9 +33,6 @@
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
-  tags:
-    - link
-  when: client_pkg_dir != ""
 
 - name: Link libraries to give versionless file
   connection: local
@@ -49,9 +40,6 @@
   with_items:
     - "libclntsh"
     - "libocci"
-  tags:
-    - link
-  when: client_pkg_dir != ""
 
 - name: Make TNS_ADMIN directory
   connection: local
@@ -81,9 +69,6 @@
 #      NLS_LANG="American_America.UTF8"
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  tags:
-    - variables
-  when: client_pkg_dir != ""
 
 - name: Define libraries in ~/.bash_profile
   connection: local
@@ -102,6 +87,3 @@
 #      NLS_LANG="American_America.UTF8"
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  tags:
-    - variables
-  when: client_pkg_dir != ""

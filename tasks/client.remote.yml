@@ -23,11 +23,7 @@
     dest: "{{ oracle_path }}"
   become: true
   with_items: "{{filenames}}"
-  tags:
-    - archive
-    - zip
   when:
-    - client_pkg_dir != ""
     - dist is defined
     - arch is defined
     - client_version is defined
@@ -41,9 +37,6 @@
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
-  tags:
-    - link
-  when: client_pkg_dir != ""
 
 - name: Link libraries to give versionless file
   file:
@@ -54,9 +47,6 @@
   with_items:
     - "libclntsh"
     - "libocci"
-  tags:
-    - link
-  when: client_pkg_dir != ""
 
 - name: Define libraries in /etc/environment
   become: true
@@ -70,9 +60,6 @@
       {{ lib_path }}={{ instantclient_path }}
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  tags:
-    - variables
-  when: client_pkg_dir != ""
 
 - name: Save system files
   template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
@@ -80,10 +67,6 @@
   with_items:
     - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
     - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
-  tags:
-    - variables
-  when: client_pkg_dir != ""
 
 - shell: ldconfig
   become: true
-  when: client_pkg_dir != ""

@@ -4,7 +4,7 @@ Setup Oracle client/library files
 
 Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/pgkehle/oracle-client)
 
-# Variables
+## Variables
 
 ```bash
 client_pkg_dir: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
@@ -19,18 +19,17 @@ Example:
     ~/downloads/oracle/client/win/x64
 ```  
 
-# Examples
+## Examples
 
 ```yaml
 - hosts: all
 
 vars: 
   client_pkg_dir: ~/downloads/oracle/client
-  do_install: true
   gather_facts: "{{ansible_host != 'localhost'}}"
 
 roles:
-  - pgkehle.oracle-client
+  - {role: pgkehle.oracle-client }
 ```
 
 ## License
@@ -41,6 +40,12 @@ MIT
 
 Paul Kehle  
 @pgkehle ([twitter](https://twitter.com/pgkehle), [github](https://github.com/pgkehle), [linkedin](https://www.linkedin.com/in/pgkehle))
+
+## For local development testing
+
+```bash
+rsync -av ~/code/ansible-oracle-client/* ~/.ansible/roles/pgkehle.oracle-client
+```
 
 ### References
 
