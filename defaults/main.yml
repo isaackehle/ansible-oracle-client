@@ -4,3 +4,9 @@ client_pkg_dir:   ""
 incl_type:        "remote"
 dist:             ""
 arch:             ""
+
+default_versions:
+  linux:          "12.2.0.1.0"
+  macos:          "11.2.0.4.0"
+
+version:          ""

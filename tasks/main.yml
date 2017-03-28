@@ -1,5 +1,8 @@
 ---
 
+
+- debug: var=client_pkg_dir
+
 - include: prep.yml
-  tags: ['install', 'init']
   when: client_pkg_dir != ""
+  tags: [ 'always' ]

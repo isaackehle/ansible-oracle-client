@@ -28,23 +28,25 @@ lib_paths:
   linux:            LD_LIBRARY_PATH
   macos:            DYLD_LIBRARY_PATH
 
-client_versions:
-  linux:            "12.1.0.2.0"
-#  macos:            "12.1.0.2.0"
-  macos:            "11.2.0.4.0"
 
-lib_versions:
-  linux:            "12_1"
-  macos:            "11_2"
-#  linux:            "12.1"
-#  macos:            "12.1"
+versions:
+  macos:
+    11.2.0.4.0:
+      lib:          "11_2"
+      file:         "11.1"
+    12.1.0.2.0:
+      lib:          "12_1"
+      file:         "12.1"
+  linux:
+    12.1.0.2.0:
+      lib:          "12_1"
+      file:         "12.1"
+    12.2.0.1.0:
+      lib:          "12_2"
+      file:         "12.1"
 
-file_versions:
-  linux:            "12.1"
-#  macos:            "12.1"
-  macos:            "11.1"
 
-packages: 
+packages:
   - basic
   - basiclite
   - sdk

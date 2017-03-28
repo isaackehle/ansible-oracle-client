@@ -11,7 +11,7 @@
     filenames: []
 
 - set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{client_version}}.zip' ]"
+    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{version}}.zip' ]"
   with_items: "{{packages}}"
 
 
@@ -23,10 +23,7 @@
     dest: "{{ oracle_path }}"
   become: true
   with_items: "{{filenames}}"
-  when:
-    - dist is defined
-    - arch is defined
-    - client_version is defined
+  when: dist is defined and arch is defined
 
 - name: Link base folders
   file:
@@ -40,7 +37,7 @@
 
 - name: Link libraries to give versionless file
   file:
-    src: "./{{ item }}.{{ driver }}.{{ file_version }}"
+    src: "./{{ item }}.{{ driver }}.{{ ver.file }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
     state: link
   become: true

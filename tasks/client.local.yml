@@ -13,7 +13,7 @@
     filenames: []
 
 - set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{client_version}}.zip' ]"
+    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{version}}.zip' ]"
   with_items: "{{packages}}"
 
 #- debug: var=filenames
@@ -22,10 +22,7 @@
   connection: local   
   unarchive:  src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
   with_items: "{{ filenames }}"
-  when:
-    - dist is defined
-    - arch is defined
-    - client_version is defined
+  when: dist is defined and arch is defined
 
 - name: Link base folders
   connection: local
@@ -36,7 +33,7 @@
 
 - name: Link libraries to give versionless file
   connection: local
-  file:  src="./{{ item }}.{{ driver }}.{{ file_version }}" dest="{{ instantclient_path }}/{{ item }}.{{ driver }}" state=link
+  file:  src="./{{ item }}.{{ driver }}.{{ ver.file }}" dest="{{ instantclient_path }}/{{ item }}.{{ driver }}" state=link
   with_items:
     - "libclntsh"
     - "libocci"
