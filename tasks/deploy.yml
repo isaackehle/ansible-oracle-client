@@ -67,7 +67,7 @@
 - fail: msg="Path exists and is a directory"
   when: (not p.stat.isdir is defined or p.stat.isdir|bool == false)
 
-- include: client.{{ incl_type }}.yml
+- include_tasks: client.{{ incl_type }}.yml
 
 
 #    nano /tmp/ocicheck.sh

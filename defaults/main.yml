@@ -1,5 +1,8 @@
 ---
 
+flags:
+  - none
+
 client_pkg_dir:   ""
 incl_type:        "remote"
 dist:             ""
@@ -10,3 +13,4 @@ default_versions:
   macos:          "11.2.0.4.0"
 
 version:          ""
+

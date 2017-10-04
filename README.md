@@ -1,4 +1,4 @@
-# Ansible: oracle-client
+# Ansible Role - oracle-client
 
 Setup Oracle client/library files
 
@@ -44,7 +44,7 @@ Paul Kehle
 ## For local development testing
 
 ```bash
-rsync -av ~/code/ansible-oracle-client/* ~/.ansible/roles/pgkehle.oracle-client
+rsync -av --delete ~/code/ansible-oracle-client/* ~/.ansible/roles/pgkehle.oracle-client
 ```
 
 ### References
