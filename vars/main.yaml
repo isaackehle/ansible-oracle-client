@@ -1,6 +1,7 @@
 ---
 
-oracle_path:            "/opt/oracle"
+opt_path:               "/opt"
+oracle_path:            "{{ opt_path }}/oracle"
 instantclient_path:     "{{ oracle_path }}/instantclient"
 oracle_include_path:    "{{ oracle_path }}/include"
 tns_admin_path:         "{{ instantclient_path }}/network/admin"
@@ -39,7 +40,7 @@ versions:
       file:         "12.1"
     12.2.0.1.0:
       lib:          "12_2"
-      file:         "12.2"
+      file:         "12.1"
   linux:
     12.1.0.2.0:
       lib:          "12_1"

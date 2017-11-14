@@ -12,7 +12,7 @@
 
 - fail: msg="Couldn't do the '{{ item }}' var"
   when:
-    - not {{ item }} is defined or {{ item }} == ""
+    - (not item is defined) or (item == "")
   with_items:
     - dist
     - arch

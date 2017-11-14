@@ -1,13 +1,27 @@
 ---
+
+- set_fact:
+    local_home: "{{ lookup('env','HOME') }}"
+
+- debug: var=local_home
+
+- name: Get status of the opt_path
+  stat: path={{ opt_path }}
+  connection: local
+  register: stat_opt_path
+
+- fail: msg="opt_path does not exist"
+  when: (stat_opt_path.stat.exists is defined and stat_opt_path.stat.exists|bool == false)
+
 - name: Kill old folders
   connection: local
   file: path={{ oracle_path }} state=absent
-
+  become: true
 
 - name: Create folders (local)
   connection: local   
   file: path={{ oracle_path }} state=directory
-
+  become: true
 
 - set_fact:
     filenames: []
@@ -23,6 +37,7 @@
   unarchive:  src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
   with_items: "{{ filenames }}"
   when: dist is defined and arch is defined
+  become: true
 
 - name: Link base folders
   connection: local
@@ -30,6 +45,7 @@
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
+  become: true
 
 - name: Link libraries to give versionless file
   connection: local
@@ -37,17 +53,21 @@
   with_items:
     - "libclntsh"
     - "libocci"
+  become: true
 
 - name: Make TNS_ADMIN directory
   connection: local
   file:  path={{ tns_admin_path }} state=directory
+  become: true
+
 
 - name: Link .ora files
   connection: local
-  file:  src="~/Documents/{{ item }}" dest="{{ tns_admin_path }}/{{ item }}" state=link
+  file:  src="{{ local_home }}/Documents/{{ item }}" dest="{{ tns_admin_path }}/{{ item }}" state=link
   with_items:
     - tnsnames.ora
     - sqlnet.ora
+  become: true
 
 - name: Define libraries in {{ item }}
   connection: local
@@ -68,8 +88,9 @@
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   with_items:
-    - "~/.zshrc"
-    - "~/.bash_profile"
+    - "{{ local_home }}/.zshrc"
+    - "{{ local_home }}/.bash_profile"
+  become: true
 
 - name: Define libraries in {{ item }}
   connection: local
@@ -87,5 +108,6 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   with_items:
     - "/etc/sudoers"
+  become: true
 
 
