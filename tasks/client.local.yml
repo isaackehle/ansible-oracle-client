@@ -69,10 +69,28 @@
     - sqlnet.ora
   become: true
 
-- name: Define libraries in {{ item }}
+- name: Get shell
+  set_fact:
+    shell_type: "{{ lookup('env','SHELL') }}"
+
+- name: Set library file when zsh
+  set_fact:
+    rc_file: "{{ local_home }}/.zshrc"
+  when: shell_type is defined and shell_type == "/bin/zsh"
+
+- name: Set library file when bash
+  set_fact:
+    rc_file: "{{ local_home }}/.bash_profile"
+  when: shell_type is defined and shell_type == "/bin/bash"
+
+- name: Set sudoers file
+  set_fact:
+    sudoers_file: "/etc/sudoers"
+
+- name: Define libraries in {{ rc_file }}
   connection: local
   blockinfile:
-    dest: "{{ item }}"
+    dest: "{{ rc_file }}"
     block: |
       export ORACLE_HOME={{ oracle_path }}
       export OCI_HOME={{ instantclient_path }}
@@ -87,15 +105,12 @@
 #      NLS_LANG="American_America.UTF8"
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  with_items:
-    - "{{ local_home }}/.zshrc"
-    - "{{ local_home }}/.bash_profile"
-  become: true
+  when: rc_file is defined and shell_type != ""
 
-- name: Define libraries in {{ item }}
+- name: Define libraries in {{ sudoers_file }}
   connection: local
   blockinfile:
-    dest: "{{ item }}"
+    dest: "{{ sudoers_file }}"
     block: |
       Defaults        env_keep += "ORACLE_HOME"
       Defaults        env_keep += "OCI_HOME"
@@ -106,8 +121,6 @@
       Defaults        env_keep += "CLASS_PATH"
     insertafter: "env_reset"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  with_items:
-    - "/etc/sudoers"
   become: true
 
 
