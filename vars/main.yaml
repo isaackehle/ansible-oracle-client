@@ -1,11 +1,9 @@
 ---
 
-opt_path:               "/opt"
-oracle_path:            "{{ opt_path }}/oracle"
-instantclient_path:     "{{ oracle_path }}/instantclient"
-oracle_include_path:    "{{ oracle_path }}/include"
-tns_admin_path:         "{{ instantclient_path }}/network/admin"
-
+oracle_path:            '/opt/oracle'
+instantclient_path:     '{{ oracle_path }}/instantclient'
+oracle_include_path:    '{{ oracle_path }}/include'
+tns_admin_path:         '{{ instantclient_path }}/network/admin'
 
 arch_folders:
   x86:              x32
@@ -32,23 +30,23 @@ lib_paths:
 
 versions:
   macos:
-    11.2.0.4.0:
-      lib:          "11_2"
-      file:         "11.1"
-    12.1.0.2.0:
-      lib:          "12_1"
-      file:         "12.1"
     12.2.0.1.0:
-      lib:          "12_2"
-      file:         "12.1"
+      lib:          '12_2'
+      link:         '12.1'
+      zip_suffix:   '12.2.0.1.0-2'
   linux:
     12.1.0.2.0:
-      lib:          "12_1"
-      file:         "12.1"
+      lib:          '12_1'
+      link:         '12.1'
+      zip_suffix:   '12.1.0.2.0'
     12.2.0.1.0:
-      lib:          "12_2"
-      file:         "12.1"
-
+      lib:          '12_2'
+      link:         '12.1'
+      zip_suffix:   '12.2.0.1.0-2'
+    18.3.0.0.0:
+      lib:          '12_2'
+      link:         '18.1'
+      zip_suffix:   '18.3.0.0.0dbru'
 
 packages:
   - basic

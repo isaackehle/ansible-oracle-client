@@ -7,16 +7,6 @@
   file: path={{ oracle_path }} state=directory owner=root group=root mode=0755
   become: true
 
-- set_fact:
-    filenames: []
-
-- set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{version}}.zip' ]"
-  with_items: "{{packages}}"
-
-
-#- debug: var=filenames
-
 - name: Unarchive client files
   unarchive:
     src: "{{ client_path }}/{{ item }}"
@@ -37,7 +27,7 @@
 
 - name: Link libraries to give versionless file
   file:
-    src: "./{{ item }}.{{ driver }}.{{ ver.file }}"
+    src: "./{{ item }}.{{ driver }}.{{ ver.link }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
     state: link
   become: true
