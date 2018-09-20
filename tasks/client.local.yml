@@ -99,7 +99,7 @@
       export OCI_INCLUDE_DIR={{ oracle_include_path }}
       export TNS_ADMIN={{ tns_admin_path }}
       export {{ lib_path }}={{ instantclient_path }}
-      CLASS_PATH+=:$ORACLE_HOME
+      export CLASS_PATH+=:$ORACLE_HOME
       {{ lib_path }}={{ instantclient_path }}
       PATH+=:{{ instantclient_path }}
 #      NLS_LANG="American_America.UTF8"

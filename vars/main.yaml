@@ -52,7 +52,7 @@ versions:
 
 packages:
   - basic
-  - basiclite
+#  - basiclite
   - sdk
   - sqlplus
   - jdbc

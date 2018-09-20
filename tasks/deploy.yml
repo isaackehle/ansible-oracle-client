@@ -52,16 +52,16 @@
 - set_fact:
     unzip_path:       "instantclient_{{ ver.lib }}"
 
-#  - debug: var=client_path
-#  - debug: var=unzip_path
+#- debug: var=unzip_path
+#- debug: var=client_path
 
 - stat: path={{ client_path }}
   connection: local
   register: p
 
-#  - debug: var=p
+#- debug: var=p
 
-- fail: msg="Path does not exist"
+- fail: msg="client_path does not exist. Make sure client_pkg_dir is set properly."
   when: (p.stat.exists is defined and p.stat.exists|bool == false)
 
 - fail: msg="Path exists and is a directory"
