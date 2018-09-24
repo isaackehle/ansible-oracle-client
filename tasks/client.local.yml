@@ -5,8 +5,8 @@
 
 - debug: var=local_home
 
-- name: Get status of the opt_path
-  stat: path={{ opt_path }}
+- name: Get status of /opt
+  stat: path=/opt
   connection: local
   register: stat_opt_path
 
@@ -22,15 +22,6 @@
   connection: local   
   file: path={{ oracle_path }} state=directory
   become: true
-
-- set_fact:
-    filenames: []
-
-- set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{version}}.zip' ]"
-  with_items: "{{packages}}"
-
-#- debug: var=filenames
 
 - name: Unarchive client files
   connection: local   
@@ -49,7 +40,10 @@
 
 - name: Link libraries to give versionless file
   connection: local
-  file:  src="./{{ item }}.{{ driver }}.{{ ver.file }}" dest="{{ instantclient_path }}/{{ item }}.{{ driver }}" state=link
+  file:
+    src: "./{{ item }}.{{ driver }}.{{ ver.link }}"
+    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
+    state: link
   with_items:
     - "libclntsh"
     - "libocci"
@@ -99,13 +93,35 @@
       export OCI_INCLUDE_DIR={{ oracle_include_path }}
       export TNS_ADMIN={{ tns_admin_path }}
       export {{ lib_path }}={{ instantclient_path }}
-      export CLASS_PATH+=:$ORACLE_HOME
+      CLASS_PATH+=:$ORACLE_HOME
       {{ lib_path }}={{ instantclient_path }}
       PATH+=:{{ instantclient_path }}
 #      NLS_LANG="American_America.UTF8"
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   when: rc_file is defined and shell_type != ""
+
+- name: Define libraries in {{ profile_path }}
+  connection: local
+  blockinfile:
+    dest: "{{ profile_path }}"
+    block: |
+      export ORACLE_HOME={{ oracle_path }}
+      export OCI_HOME={{ instantclient_path }}
+      export OCI_LIB_DIR={{ instantclient_path }}
+      export OCI_INC_DIR={{ oracle_include_path }}
+      export OCI_INCLUDE_DIR={{ oracle_include_path }}
+      export {{ lib_path }}={{ instantclient_path }}
+      export TNS_ADMIN={{ tns_admin_path }}
+
+      CLASS_PATH+=:$ORACLE_HOME
+      {{ lib_path }}={{ instantclient_path }}
+      PATH+=:{{ instantclient_path }}
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
+  when: profile_path is defined
+
+#      export ORACLE_HOME=/opt/oracle/instantclient
 
 - name: Define libraries in {{ sudoers_file }}
   connection: local

@@ -12,25 +12,33 @@
 
 - fail: msg="Couldn't do the '{{ item }}' var"
   when:
-    - (not item is defined) or (item == "")
+    - item is undefined or item == ""
   with_items:
     - dist
     - arch
 
 - set_fact:
     version: "{{ default_versions[dist] }}"
-  when: not version is defined or version == ""
+  when: version is undefined or version == ""
 
 - set_fact:
     ver: "{{ versions[dist][version] }}"
 
-- debug: var=ver
+#- debug: var=ver
+#- debug: var=client_pkg_dir
+
+- set_fact:
+    filenames: []
+
+- set_fact:
+    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
+  with_items: "{{ packages }}"
+
+- debug: var=filenames
 
 - set_fact:
     incl_type: "local"
   when: ansible_host == 'localhost'
-
-#- debug: var=incl_type
 
 - name: Ensure packages are installed
   apt:
@@ -52,24 +60,19 @@
 - set_fact:
     unzip_path:       "instantclient_{{ ver.lib }}"
 
-#- debug: var=unzip_path
-#- debug: var=client_path
-
 - stat: path={{ client_path }}
   connection: local
   register: p
 
+#- debug: var=unzip_path
+#- debug: var=client_path
 #- debug: var=p
+#- debug: var=incl_type
 
 - fail: msg="client_path does not exist. Make sure client_pkg_dir is set properly."
   when: (p.stat.exists is defined and p.stat.exists|bool == false)
 
 - fail: msg="Path exists and is a directory"
-  when: (not p.stat.isdir is defined or p.stat.isdir|bool == false)
+  when: (p.stat.isdir is undefined or p.stat.isdir|bool == false)
 
 - include_tasks: client.{{ incl_type }}.yml
-
-
-#    nano /tmp/ocicheck.sh
-#    chmod a+x /tmp/ocicheck.sh
-#    sudo /tmp/ocicheck.sh

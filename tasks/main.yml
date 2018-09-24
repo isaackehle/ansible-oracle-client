@@ -1,9 +1,7 @@
 ---
 
-
-- debug: var=client_pkg_dir
-
 - name: Deploy to the server
   include_tasks: deploy.yml
   when: (((['deploy'] | intersect(flags)) | length > 0) and client_pkg_dir != "")
   tags: [ 'always' ]
+
