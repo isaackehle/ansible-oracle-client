@@ -18,7 +18,7 @@ dist_folders:
   MacOS:            macos
   Windows:          win
 
-driver_types:
+lib_types:
   linux:            so
   macos:            dylib
   win:              dll
@@ -56,3 +56,8 @@ packages:
   - jdbc
 #  - odbc
   - tools
+
+
+linked_libraries:
+  - libclntsh
+  - libocci

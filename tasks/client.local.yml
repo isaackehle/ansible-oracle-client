@@ -1,24 +1,45 @@
 ---
 
-- set_fact:
+- name: Set local home path
+  set_fact:
     local_home: "{{ lookup('env','HOME') }}"
 
-- debug: var=local_home
+- name: Set local profile
+  set_fact:
+    profile_path: "{{ local_home }}/.profile"
+    tnsnames_path: "{{ local_home }}/{{ tnsnames_file }}"
+    sqlnet_path: "{{ local_home }}/{{ sqlnet_file }}"
+
+- debug: var={{ item }}
+  with_items:
+    - local_home
+    - profile_path
+    - tnsnames_path
+    - sqlnet_path
+
+- name: Create {{ profile_path }} if it doesn't exist
+  file:
+    path: "{{ profile_path }}"
+    state: touch
+  connection: local
 
 - name: Get status of /opt
   stat: path=/opt
   connection: local
   register: stat_opt_path
 
-- fail: msg="opt_path does not exist"
+- name: Create /opt when it does not exist
+  file: path=/opt state=directory
+  connection: local
+  become: true
   when: (stat_opt_path.stat.exists is defined and stat_opt_path.stat.exists|bool == false)
 
-- name: Kill old folders
+- name: Kill old oracle installation
   connection: local
   file: path={{ oracle_path }} state=absent
   become: true
 
-- name: Create folders (local)
+- name: Create folders
   connection: local   
   file: path={{ oracle_path }} state=directory
   become: true
@@ -41,26 +62,45 @@
 - name: Link libraries to give versionless file
   connection: local
   file:
-    src: "./{{ item }}.{{ driver }}.{{ ver.link }}"
-    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
+    src: "./{{ item }}.{{ libtype }}.{{ ver.link }}"
+    dest: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
     state: link
-  with_items:
-    - "libclntsh"
-    - "libocci"
+  with_items: "{{ linked_libraries }}"
   become: true
+
+- name: Link libraries to /usr/local/lib
+  connection: local
+  file:
+    src: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
+    dest: "/usr/local/lib/{{ item }}.{{ libtype }}"
+    state: link
+  with_items: "{{ linked_libraries }}"
 
 - name: Make TNS_ADMIN directory
   connection: local
-  file:  path={{ tns_admin_path }} state=directory
+  file: path={{ tns_admin_path }} state=directory
   become: true
 
-
-- name: Link .ora files
+- name: Get status of {{ tnsnames_path }}
+  stat: path={{ tnsnames_path }}
   connection: local
-  file:  src="{{ local_home }}/Documents/{{ item }}" dest="{{ tns_admin_path }}/{{ item }}" state=link
-  with_items:
-    - tnsnames.ora
-    - sqlnet.ora
+  register: stat_tnsnames
+
+- name: Link {{ tnsnames_path }}
+  file:  src="{{ tnsnames_path }}" dest="{{ tns_admin_path }}/tnsnames.ora" state=link
+  when: (stat_tnsnames.stat.exists is defined and stat_tnsnames.stat.exists|bool == false)
+  connection: local
+  become: true
+
+- name: Get status of {{ sqlnet_path }}
+  stat: path={{ sqlnet_path }}
+  connection: local
+  register: stat_sqlnet
+
+- name: Link {{ sqlnet_path }}
+  connection: local
+  file:  src="{{ sqlnet_path }}" dest="{{ tns_admin_path }}/sqlnet.ora" state=link
+  when: (stat_sqlnet.stat.exists is defined and stat_sqlnet.stat.exists|bool == false)
   become: true
 
 - name: Get shell
@@ -101,6 +141,7 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   when: rc_file is defined and shell_type != ""
 
+
 - name: Define libraries in {{ profile_path }}
   connection: local
   blockinfile:
@@ -136,5 +177,3 @@
     insertafter: "env_reset"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
   become: true
-
-

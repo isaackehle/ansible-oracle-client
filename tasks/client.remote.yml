@@ -27,13 +27,11 @@
 
 - name: Link libraries to give versionless file
   file:
-    src: "./{{ item }}.{{ driver }}.{{ ver.link }}"
-    dest: "{{ instantclient_path }}/{{ item }}.{{ driver }}"
+    src: "./{{ item }}.{{ libtype }}.{{ ver.link }}"
+    dest: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
     state: link
   become: true
-  with_items:
-    - "libclntsh"
-    - "libocci"
+  with_items: "{{ linked_libraries }}"
 
 - name: Define libraries in /etc/environment
   become: true
@@ -49,7 +47,12 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
 
 - name: Save system files
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root mode=0644
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
   become: true
   with_items:
     - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
