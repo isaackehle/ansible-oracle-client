@@ -14,5 +14,10 @@ default_versions:
 
 version:          ""
 
+ora_directory:        'Documents'
+tnsnames_file:        '{{ ora_directory }}/tnsnames.ora'
+sqlnet_file:          '{{ ora_directory }}/sqlnet.ora'
 
-profile_path:     '~/.profile'
+tnsnames_tgt_path:    '{{ tns_admin_path }}/tnsnames.ora'
+sqlnet_tgt_path:      '{{ tns_admin_path }}/sqlnet.ora'
+

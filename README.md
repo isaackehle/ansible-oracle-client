@@ -41,12 +41,6 @@ MIT
 Paul Kehle  
 @pgkehle ([twitter](https://twitter.com/pgkehle), [github](https://github.com/pgkehle), [linkedin](https://www.linkedin.com/in/pgkehle))
 
-## For local development testing
-
-```bash
-rsync -av --delete ~/code/ansible-oracle-client/* ~/.ansible/roles/pgkehle.oracle-client
-```
-
 ### References
 
 Download [Instant Client from Oracle](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html):

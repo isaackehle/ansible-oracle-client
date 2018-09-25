@@ -7,8 +7,10 @@
     dist: "{{ dist_folders[ansible_distribution] }}"
     arch: "{{ arch_folders[ansible_architecture] }}"
 
-#- debug: var=dist
-#- debug: var=arch
+#- debug: var={{ item }}
+#  with_items:
+#    - dist
+#    - arch
 
 - fail: msg="Couldn't do the '{{ item }}' var"
   when:
@@ -24,9 +26,6 @@
 - set_fact:
     ver: "{{ versions[dist][version] }}"
 
-#- debug: var=ver
-#- debug: var=client_pkg_dir
-
 - set_fact:
     filenames: []
 
@@ -34,7 +33,11 @@
     filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
   with_items: "{{ packages }}"
 
-- debug: var=filenames
+- debug: var={{ item }}
+  with_items:
+    - client_pkg_dir
+    - filenames
+    - ver
 
 - set_fact:
     incl_type: "local"
@@ -53,7 +56,7 @@
   when: dist == "linux"
 
 - set_fact:
-    driver:           "{{ driver_types[dist] }}"
+    libtype:          "{{ lib_types[dist] }}"
     lib_path:         "{{ lib_paths[dist] }}"
     client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ dist }}/{{ arch }}"
 
@@ -64,10 +67,14 @@
   connection: local
   register: p
 
-#- debug: var=unzip_path
-#- debug: var=client_path
-#- debug: var=p
-#- debug: var=incl_type
+
+- debug: var={{ item }}
+  with_items:
+    - unzip_path
+    - client_path
+    - p
+    - incl_type
+
 
 - fail: msg="client_path does not exist. Make sure client_pkg_dir is set properly."
   when: (p.stat.exists is defined and p.stat.exists|bool == false)
