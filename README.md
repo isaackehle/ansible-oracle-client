@@ -24,7 +24,7 @@ Example:
 ```yaml
 - hosts: all
 
-vars: 
+vars:
   client_pkg_dir: ~/downloads/oracle/client
   gather_facts: "{{ansible_host != 'localhost'}}"
 
