@@ -45,14 +45,9 @@
 
 - name: Ensure packages are installed
   apt:
-    name: "{{ item }}"
+    name: [ 'zip', 'unzip', 'gzip', 'libaio1' ]
     state: installed
   become: true
-  with_items:
-    - zip
-    - unzip
-    - gzip
-    - libaio1
   when: dist == "linux"
 
 - set_fact:

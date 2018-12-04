@@ -9,7 +9,7 @@ dist:             ""
 arch:             ""
 
 default_versions:
-  linux:          "12.2.0.1.0"
+  linux:          "18.3.0.0.0"
   macos:          "12.2.0.1.0"
 
 version:          ""
