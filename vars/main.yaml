@@ -44,7 +44,7 @@ versions:
       link:         '12.1'
       zip_suffix:   '12.2.0.1.0-2'
     18.3.0.0.0:
-      lib:          '12_2'
+      lib:          '18_3'
       link:         '18.1'
       zip_suffix:   '18.3.0.0.0dbru'
 
