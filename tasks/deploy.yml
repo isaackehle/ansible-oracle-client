@@ -46,7 +46,7 @@
 - name: Ensure packages are installed
   apt:
     name: [ 'zip', 'unzip', 'gzip', 'libaio1' ]
-    state: installed
+    state: present
   become: true
   when: dist == "linux"
 
