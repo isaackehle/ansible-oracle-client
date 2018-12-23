@@ -30,7 +30,7 @@
     filenames: []
 
 - set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{item}}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
+    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
   with_items: "{{ packages }}"
 
 - debug: var={{ item }}
