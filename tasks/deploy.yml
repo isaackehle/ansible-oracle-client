@@ -3,44 +3,47 @@
 #  - fail: msg="Please define local client_pkg_dir variable"
 #    when: client_pkg_dir == ""
 
-- set_fact:
-    dist: "{{ dist_folders[ansible_distribution] }}"
-    arch: "{{ arch_folders[ansible_architecture] }}"
+- name: Gather Facts now that the server can be reached
+  setup:
+  when: ansible_host != 'localhost'
 
-#- debug: var={{ item }}
-#  with_items:
-#    - dist
-#    - arch
+- debug: var={{ item }}
+  with_items:
+    - ansible_distribution
+    - ansible_architecture
+    - ansible_system
 
-- fail: msg="Couldn't do the '{{ item }}' var"
+- set_fact: system_config={{ system_configs[ansible_distribution] }}
+- set_fact: arch={{ arch_folders[ansible_architecture] }}
+
+- debug: var={{ item }}
+  with_items:
+    - system_config
+    - arch
+
+- fail: msg=Variable '{{ item }}' was not properly defined
   when:
     - item is undefined or item == ""
   with_items:
-    - dist
+    - system_config
     - arch
 
-- set_fact:
-    version: "{{ default_versions[dist] }}"
+- set_fact: version={{ system_config.version }}
   when: version is undefined or version == ""
 
-- set_fact:
-    ver: "{{ versions[dist][version] }}"
+- set_fact: version_cfg={{ version_configs[system_config.system][version] }}
+- debug: var=version_cfg
 
 - set_fact:
     filenames: []
 
 - set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
+    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{system_config.system}}.{{arch}}-{{version_cfg.zip_suffix}}.zip' ]"
   with_items: "{{ packages }}"
 
-- debug: var={{ item }}
-  with_items:
-    - client_pkg_dir
-    - filenames
-    - ver
+- debug: var=filenames
 
-- set_fact:
-    incl_type: "local"
+- set_fact: incl_type=local
   when: ansible_host == 'localhost'
 
 - name: Ensure packages are installed
@@ -48,15 +51,13 @@
     name: [ 'zip', 'unzip', 'gzip', 'libaio1' ]
     state: present
   become: true
-  when: dist == "linux"
+  when: system_config.system == "linux"
 
 - set_fact:
-    libtype:          "{{ lib_types[dist] }}"
-    lib_path:         "{{ lib_paths[dist] }}"
-    client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ dist }}/{{ arch }}"
-
-- set_fact:
-    unzip_path:       "instantclient_{{ ver.lib }}"
+    libtype:          "{{ lib_types[system_config.system] }}"
+    lib_path:         "{{ lib_paths[system_config.system] }}"
+    client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
+    unzip_path:       "instantclient_{{ version_cfg.lib }}"
 
 - stat: path={{ client_path }}
   connection: local

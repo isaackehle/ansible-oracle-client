@@ -48,7 +48,7 @@
   connection: local   
   unarchive:  src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
   with_items: "{{ filenames }}"
-  when: dist is defined and arch is defined
+  when: arch is defined
   become: true
 
 - name: Link base folders
@@ -62,7 +62,7 @@
 - name: Link libraries to give versionless file
   connection: local
   file:
-    src: "./{{ item }}.{{ libtype }}.{{ ver.link }}"
+    src: "./{{ item }}.{{ libtype }}.{{ version_cfg.link }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
     state: link
   with_items: "{{ linked_libraries }}"

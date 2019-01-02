@@ -5,13 +5,7 @@ flags:
 
 client_pkg_dir:   ""
 incl_type:        "remote"
-dist:             ""
 arch:             ""
-
-default_versions:
-  linux:          "18.3.0.0.0"
-  macos:          "12.2.0.1.0"
-
 version:          ""
 
 ora_directory:        'Documents'
