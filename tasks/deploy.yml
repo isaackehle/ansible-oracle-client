@@ -3,15 +3,11 @@
 #  - fail: msg="Please define local client_pkg_dir variable"
 #    when: client_pkg_dir == ""
 
-- name: Gather Facts now that the server can be reached
-  setup:
-  when: ansible_host != 'localhost'
-
-- debug: var={{ item }}
-  with_items:
-    - ansible_distribution
-    - ansible_architecture
-    - ansible_system
+# - debug: var={{ item }}
+#   with_items:
+#     - ansible_distribution
+#     - ansible_architecture
+#     - ansible_system
 
 - set_fact: system_config={{ system_configs[ansible_distribution] }}
 - set_fact: arch={{ arch_folders[ansible_architecture] }}
