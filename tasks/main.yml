@@ -22,9 +22,9 @@
 
 - name: Set basic facts, assuming MacOS
   set_fact:
-    server_fqdn:            "{{host_long.stdout}}"
-    hostname_short:         "{{host_short.stdout}}"
-    inventory_hostname:     "{{host_short.stdout}}"
+    server_fqdn:            "{{ host_long.stdout }}"
+    hostname_short:         "{{ host_short.stdout }}"
+    inventory_hostname:     "{{ host_short.stdout }}"
     ansible_distribution:   MacOS
     ansible_architecture:   x86_64
     gather_facts:           no

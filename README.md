@@ -26,7 +26,7 @@ Example:
 
 vars:
   client_pkg_dir: ~/Downloads/oracle/client
-  gather_facts: "{{ansible_host != 'localhost'}}"
+  gather_facts: "{{ ansible_host != 'localhost' }}"
 
 roles:
   - {role: pgkehle.oracle-client }

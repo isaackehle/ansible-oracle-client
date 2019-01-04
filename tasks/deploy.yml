@@ -29,7 +29,7 @@
 
 - name: Set Filenames
   set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{system_config.system}}.{{arch}}-{{version_cfg.zip_suffix}}.zip' ]"
+    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{ system_config.system }}.{{ arch }}-{{ version_cfg.zip_suffix }}.zip' ]"
   with_items: "{{ packages }}"
 
 - name: Set Include Type when local
