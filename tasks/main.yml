@@ -2,24 +2,24 @@
 - name: Oracle Client Deployment
   hosts: all
   # remote_user: root
-  gather_facts: (ansible_host == 'localhost')
+  gather_facts: (inventory_hostname == 'localhost')
 
   tasks:
     # - name: Gather Facts now that the server can be reached
     #   setup:
-    #   when: ansible_host != 'localhost'
+    #   when: inventory_hostname != 'localhost'
 
     - name: Get the local hostname (short)
       shell: hostname -s
       connection: local
       register: host_short
-      when: ansible_host == 'localhost'
+      when: inventory_hostname == 'localhost'
 
     - name: Get the local hostname (long)
       shell: hostname
       connection: local
       register: host_long
-      when: ansible_host == 'localhost'
+      when: inventory_hostname == 'localhost'
 
     - name: Set basic facts, assuming MacOS
       set_fact:
@@ -29,7 +29,7 @@
         ansible_distribution:   MacOS
         ansible_architecture:   x86_64
         gather_facts:           no
-      when: ansible_host == 'localhost'
+      when: inventory_hostname == 'localhost'
 
     - name: Deploy to the server
       include_tasks: deploy.yml

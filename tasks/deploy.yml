@@ -35,7 +35,7 @@
 - name: Set Include Type when local
   set_fact: 
     incl_type: local
-  when: ansible_host == 'localhost'
+  when: inventory_hostname == 'localhost'
 
 - name: Ensure packages are installed
   apt:
