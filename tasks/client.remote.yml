@@ -1,10 +1,17 @@
 ---
 - name: Kill old folders
   become: true
-  file: path={{ oracle_path }} state=absent
+  file: 
+    path: '{{ oracle_path }}' 
+    state: absent
 
 - name: Create folders
-  file: path={{ oracle_path }} state=directory owner=root group=root mode=0755
+  file: 
+    path: '{{ oracle_path }}' 
+    state: directory 
+    owner: root 
+    group: root 
+    mode: '0755'
   become: true
 
 - name: Unarchive client files
@@ -16,7 +23,10 @@
   when: arch is defined
 
 - name: Link base folders
-  file: src={{ item.src }} dest={{ item.dest }} state=link
+  file: 
+    src: '{{ item.src }}' 
+    dest: '{{ item.dest }}' 
+    state: link
   become: true
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
