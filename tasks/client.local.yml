@@ -10,15 +10,6 @@
     tnsnames_path: "{{ local_home }}/{{ tnsnames_file }}"
     sqlnet_path: "{{ local_home }}/{{ sqlnet_file }}"
 
-- name: Debug
-  debug: 
-    var: "{{ item }}"
-  with_items:
-    - local_home
-    - profile_path
-    - tnsnames_path
-    - sqlnet_path
-
 - name: Create {{ profile_path }} if it doesn't exist
   file:
     path: "{{ profile_path }}"
