@@ -1,80 +1,70 @@
 ---
 
-#  - fail: msg="Please define local client_pkg_dir variable"
-#    when: client_pkg_dir == ""
-
-- set_fact:
-    dist: "{{ dist_folders[ansible_distribution] }}"
+- name: Basic Facts
+  set_fact: 
+    system_config: "{{ system_configs[ansible_distribution] }}"
     arch: "{{ arch_folders[ansible_architecture] }}"
 
-#- debug: var={{ item }}
-#  with_items:
-#    - dist
-#    - arch
-
-- fail: msg="Couldn't do the '{{ item }}' var"
+- name: Ensure variables
+  fail: 
+    msg: Variable '{{ item }}' was not properly defined
   when:
     - item is undefined or item == ""
   with_items:
-    - dist
+    - system_config
     - arch
 
-- set_fact:
-    version: "{{ default_versions[dist] }}"
+- name: Fallback for version
+  set_fact: 
+    version: "{{ system_config.version }}"
   when: version is undefined or version == ""
 
-- set_fact:
-    ver: "{{ versions[dist][version] }}"
+- name: Version Config
+  set_fact: 
+    version_cfg: "{{ version_configs[system_config.system][version] }}"
 
-- set_fact:
+- name: Prep Filenames
+  set_fact:
     filenames: []
 
-- set_fact:
-    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{dist}}.{{arch}}-{{ver.zip_suffix}}.zip' ]"
+- name: Set Filenames
+  set_fact:
+    filenames: "{{ filenames }} + [ 'instantclient-{{ item }}-{{ system_config.system }}.{{ arch }}-{{ version_cfg.zip_suffix }}.zip' ]"
   with_items: "{{ packages }}"
 
-- debug: var={{ item }}
-  with_items:
-    - client_pkg_dir
-    - filenames
-    - ver
-
-- set_fact:
-    incl_type: "local"
-  when: ansible_host == 'localhost'
+- name: Set Include Type when local
+  set_fact: 
+    incl_type: local
+  when: inventory_hostname == 'localhost'
 
 - name: Ensure packages are installed
   apt:
     name: [ 'zip', 'unzip', 'gzip', 'libaio1' ]
     state: present
   become: true
-  when: dist == "linux"
+  when: system_config.system == "linux"
 
-- set_fact:
-    libtype:          "{{ lib_types[dist] }}"
-    lib_path:         "{{ lib_paths[dist] }}"
-    client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ dist }}/{{ arch }}"
+- name: More facts
+  set_fact:
+    libtype:          "{{ lib_types[system_config.system] }}"
+    lib_path:         "{{ lib_paths[system_config.system] }}"
+    client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
+    unzip_path:       "instantclient_{{ version_cfg.lib }}"
 
-- set_fact:
-    unzip_path:       "instantclient_{{ ver.lib }}"
-
-- stat: path={{ client_path }}
+- name: Client Path Status
+  stat: 
+    path: "{{ client_path }}"
   connection: local
   register: p
 
-
-- debug: var={{ item }}
-  with_items:
-    - unzip_path
-    - client_path
-    - p
-    - incl_type
-
-
-- fail: msg="client_path does not exist. Make sure client_pkg_dir is set properly."
+- name: Fail when the client package directory is not valid
+  fail: 
+    msg: "client_path does not exist. Make sure client_pkg_dir is set properly."
   when: (p.stat.exists is defined and p.stat.exists|bool == false)
 
-- fail: msg="Path exists and is a directory"
+- name: Fail when the path exists and is a directory
+  fail: 
+    msg: "Path exists and is a directory"
   when: (p.stat.isdir is undefined or p.stat.isdir|bool == false)
 
 - include_tasks: client.{{ incl_type }}.yml

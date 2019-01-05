@@ -11,12 +11,22 @@ arch_folders:
   x64:              x64
   x86_64:           x64
 
-dist_folders:
-  Ubuntu:           linux
-  Debian:           linux
-  CentOS:           linux
-  MacOS:            macos
-  Windows:          win
+system_configs:
+  Ubuntu:
+    system:       linux
+    version:      18.3.0.0.0
+  Debian:
+    system:       linux
+    version:      18.3.0.0.0
+  CentOS:
+    system:       linux
+    version:      18.3.0.0.0
+  MacOS:
+    system:       macos
+    version:      12.2.0.1.0
+  Windows:
+    system:       win
+    version:      '' # TBD
 
 lib_types:
   linux:            so
@@ -27,8 +37,7 @@ lib_paths:
   linux:            LD_LIBRARY_PATH
   macos:            DYLD_LIBRARY_PATH
 
-
-versions:
+version_configs:
   macos:
     12.2.0.1.0:
       lib:          '12_2'

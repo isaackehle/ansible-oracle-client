@@ -10,13 +10,6 @@
     tnsnames_path: "{{ local_home }}/{{ tnsnames_file }}"
     sqlnet_path: "{{ local_home }}/{{ sqlnet_file }}"
 
-- debug: var={{ item }}
-  with_items:
-    - local_home
-    - profile_path
-    - tnsnames_path
-    - sqlnet_path
-
 - name: Create {{ profile_path }} if it doesn't exist
   file:
     path: "{{ profile_path }}"
@@ -24,45 +17,57 @@
   connection: local
 
 - name: Get status of /opt
-  stat: path=/opt
+  stat: 
+    path: /opt
   connection: local
   register: stat_opt_path
 
 - name: Create /opt when it does not exist
-  file: path=/opt state=directory
+  file: 
+    path: /opt 
+    state: directory
   connection: local
   become: true
   when: (stat_opt_path.stat.exists is defined and stat_opt_path.stat.exists|bool == false)
 
 - name: Kill old oracle installation
+  file: 
+    path: "{{ oracle_path }}" 
+    state: absent
   connection: local
-  file: path={{ oracle_path }} state=absent
   become: true
 
 - name: Create folders
+  file: 
+    path: "{{ oracle_path }}" 
+    state: directory
   connection: local   
-  file: path={{ oracle_path }} state=directory
   become: true
 
 - name: Unarchive client files
-  connection: local   
-  unarchive:  src="{{ client_path }}/{{ item }}" dest="{{ oracle_path }}"
+  unarchive:  
+    src: "{{ client_path }}/{{ item }}" 
+    dest: "{{ oracle_path }}"
   with_items: "{{ filenames }}"
-  when: dist is defined and arch is defined
+  when: arch is defined
+  connection: local   
   become: true
 
 - name: Link base folders
-  connection: local
-  file:  src="{{ item.src }}" dest="{{ item.dest }}" state=link
+  file: 
+    src: "{{ item.src }}" 
+    dest: "{{ item.dest }}" 
+    state: link
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
+  connection: local
   become: true
 
 - name: Link libraries to give versionless file
   connection: local
   file:
-    src: "./{{ item }}.{{ libtype }}.{{ ver.link }}"
+    src: "./{{ item }}.{{ libtype }}.{{ version_cfg.link }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
     state: link
   with_items: "{{ linked_libraries }}"
@@ -78,28 +83,38 @@
 
 - name: Make TNS_ADMIN directory
   connection: local
-  file: path={{ tns_admin_path }} state=directory
+  file: 
+    path: "{{ tns_admin_path }}" 
+    state: directory
   become: true
 
 - name: Get status of {{ tnsnames_path }}
-  stat: path={{ tnsnames_path }}
+  stat: 
+    path: "{{ tnsnames_path }}"
   connection: local
   register: stat_tnsnames
 
 - name: Link {{ tnsnames_path }}
-  file:  src="{{ tnsnames_path }}" dest="{{ tns_admin_path }}/tnsnames.ora" state=link
+  file:  
+    src: "{{ tnsnames_path }}" 
+    dest: "{{ tns_admin_path }}/tnsnames.ora" 
+    state: link
   when: (stat_tnsnames.stat.exists is defined and stat_tnsnames.stat.exists|bool == false)
   connection: local
   become: true
 
 - name: Get status of {{ sqlnet_path }}
-  stat: path={{ sqlnet_path }}
+  stat: 
+    path: "{{ sqlnet_path }}"
   connection: local
   register: stat_sqlnet
 
 - name: Link {{ sqlnet_path }}
   connection: local
-  file:  src="{{ sqlnet_path }}" dest="{{ tns_admin_path }}/sqlnet.ora" state=link
+  file: 
+    src: "{{ sqlnet_path }}" 
+    dest: "{{ tns_admin_path }}/sqlnet.ora" 
+    state: link
   when: (stat_sqlnet.stat.exists is defined and stat_sqlnet.stat.exists|bool == false)
   become: true
 
