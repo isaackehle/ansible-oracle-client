@@ -7,7 +7,7 @@ Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/
 ## Variables
 
 ```bash
-client_pkg_dir: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
+oracle_clients: Local Install Folder.  Requires one of linux, macos, or win, with x32 and/or x64.
 
 Example:
     ~/downloads/oracle/client
@@ -25,7 +25,7 @@ Example:
 - hosts: all
 
 vars:
-  client_pkg_dir: ~/Downloads/oracle/client
+  oracle_clients: ~/Downloads/oracle/client
   gather_facts: "{{ inventory_hostname != 'localhost' }}"
 
 roles:

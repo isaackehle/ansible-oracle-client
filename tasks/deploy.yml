@@ -44,11 +44,16 @@
   become: true
   when: system_config.system == "linux"
 
+- debug: var=system_config
+- debug: var=oracle_clients
+- debug: var=incl_type
+- debug: var=inventory_hostname
+
 - name: More facts
   set_fact:
     libtype:          "{{ lib_types[system_config.system] }}"
     lib_path:         "{{ lib_paths[system_config.system] }}"
-    client_path:      "{{ client_pkg_dir | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
+    client_path:      "{{ oracle_clients | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
     unzip_path:       "instantclient_{{ version_cfg.lib }}"
 
 - name: Client Path Status
@@ -59,7 +64,7 @@
 
 - name: Fail when the client package directory is not valid
   fail: 
-    msg: "client_path does not exist. Make sure client_pkg_dir is set properly."
+    msg: "client_path does not exist. Make sure oracle_clients is set properly."
   when: (p.stat.exists is defined and p.stat.exists|bool == false)
 
 - name: Fail when the path exists and is a directory

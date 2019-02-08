@@ -3,7 +3,7 @@
 flags:
   - none
 
-client_pkg_dir:   ""
+oracle_clients:   ""
 incl_type:        "remote"
 arch:             ""
 version:          ""
