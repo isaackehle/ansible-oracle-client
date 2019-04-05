@@ -14,16 +14,16 @@ arch_folders:
 system_configs:
   Ubuntu:
     system:       linux
-    version:      18.3.0.0.0
+    version:      18.5.0.0.0
   Debian:
     system:       linux
-    version:      18.3.0.0.0
+    version:      18.5.0.0.0
   CentOS:
     system:       linux
-    version:      18.3.0.0.0
+    version:      18.5.0.0.0
   MacOS:
     system:       macos
-    version:      12.2.0.1.0
+    version:      18.1.0.0.0
   Windows:
     system:       win
     version:      '' # TBD
@@ -43,6 +43,10 @@ version_configs:
       lib:          '12_2'
       link:         '12.1'
       zip_suffix:   '12.2.0.1.0-2'
+    18.1.0.0.0:
+      lib:          '18_1'
+      link:         '18.1'
+      zip_suffix:   '18.1.0.0.0'
   linux:
     12.1.0.2.0:
       lib:          '12_1'
@@ -56,6 +60,10 @@ version_configs:
       lib:          '18_3'
       link:         '18.1'
       zip_suffix:   '18.3.0.0.0dbru'
+    18.5.0.0.0:
+      lib:          '18_5'
+      link:         '18.1'
+      zip_suffix:   '18.5.0.0.0dbru'
 
 packages:
   - basic
