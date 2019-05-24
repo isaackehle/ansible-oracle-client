@@ -1,5 +1,4 @@
 ---
-
 - name: Get the local hostname (short)
   shell: hostname -s
   connection: local
@@ -14,14 +13,13 @@
 
 - name: Set basic facts, assuming MacOS
   set_fact:
-    server_fqdn:            "{{ host_long.stdout }}"
-    hostname_short:         "{{ host_short.stdout }}"
-    ansible_distribution:   MacOS
-    ansible_architecture:   x86_64
-    gather_facts:           no
+    server_fqdn: "{{ host_long.stdout }}"
+    hostname_short: "{{ host_short.stdout }}"
+    ansible_distribution: MacOS
+    ansible_architecture: x86_64
+    gather_facts: no
   when: inventory_hostname == 'localhost'
 
 - name: Deploy to the server
   include_tasks: deploy.yml
-  when: oracle_clients != ""
-
+  when: oracle_clients | length > 0

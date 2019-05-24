@@ -153,7 +153,7 @@
       PATH+=:{{ instantclient_path }}
     insertafter: EOF
     marker: "# {mark} ANSIBLE MANAGED BLOCK - ORACLE"
-  when: rc_file is defined and shell_type != ""
+  when: rc_file is defined and shell_type | length > 0
 
 - name: Define libraries in {{ profile_path }}
   connection: local
