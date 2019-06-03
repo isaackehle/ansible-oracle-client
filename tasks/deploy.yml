@@ -1,26 +1,25 @@
 ---
-
 - name: Basic Facts
-  set_fact: 
+  set_fact:
     system_config: "{{ system_configs[ansible_distribution] }}"
     arch: "{{ arch_folders[ansible_architecture] }}"
 
 - name: Ensure variables
-  fail: 
+  fail:
     msg: Variable '{{ item }}' was not properly defined
   when:
-    - item is undefined or item == ""
+    - item is undefined or item | length == 0
   with_items:
     - system_config
     - arch
 
 - name: Fallback for version
-  set_fact: 
+  set_fact:
     version: "{{ system_config.version }}"
-  when: version is undefined or version == ""
+  when: version is undefined or version | length == 0
 
 - name: Version Config
-  set_fact: 
+  set_fact:
     version_cfg: "{{ version_configs[system_config.system][version] }}"
 
 - name: Prep Filenames
@@ -33,43 +32,38 @@
   with_items: "{{ packages }}"
 
 - name: Set Include Type when local
-  set_fact: 
+  set_fact:
     incl_type: local
   when: inventory_hostname == 'localhost'
 
 - name: Ensure packages are installed
   apt:
-    name: [ 'zip', 'unzip', 'gzip', 'libaio1' ]
+    name: ["zip", "unzip", "gzip", "libaio1"]
     state: present
   become: true
   when: system_config.system == "linux"
 
-- debug: var=system_config
-- debug: var=oracle_clients
-- debug: var=incl_type
-- debug: var=inventory_hostname
-
 - name: More facts
   set_fact:
-    libtype:          "{{ lib_types[system_config.system] }}"
-    lib_path:         "{{ lib_paths[system_config.system] }}"
-    client_path:      "{{ oracle_clients | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
-    unzip_path:       "instantclient_{{ version_cfg.lib }}"
+    libtype: "{{ lib_types[system_config.system] }}"
+    lib_path: "{{ lib_paths[system_config.system] }}"
+    client_path: "{{ oracle_clients | regex_replace( '/$', '' ) }}/{{ system_config.system }}/{{ arch }}"
+    unzip_path: "instantclient_{{ version_cfg.lib }}"
 
 - name: Client Path Status
-  stat: 
+  stat:
     path: "{{ client_path }}"
   connection: local
   register: p
 
 - name: Fail when the client package directory is not valid
-  fail: 
+  fail:
     msg: "client_path does not exist. Make sure oracle_clients is set properly."
-  when: (p.stat.exists is defined and p.stat.exists|bool == false)
+  when: (p.stat.exists is defined and not p.stat.exists)
 
 - name: Fail when the path exists and is a directory
-  fail: 
+  fail:
     msg: "Path exists and is a directory"
-  when: (p.stat.isdir is undefined or p.stat.isdir|bool == false)
+  when: (p.stat.isdir is undefined or not p.stat.isdir)
 
 - include_tasks: client.{{ incl_type }}.yml
