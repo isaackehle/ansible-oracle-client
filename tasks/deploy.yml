@@ -53,7 +53,7 @@
 - name: Client Path Status
   stat:
     path: "{{ client_path }}"
-  connection: local
+  delegate_to: localhost
   register: p
 
 - name: Fail when the client package directory is not valid

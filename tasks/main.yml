@@ -1,13 +1,13 @@
 ---
 - name: Get the local hostname (short)
   shell: hostname -s
-  connection: local
+  delegate_to: localhost
   register: host_short
   when: inventory_hostname == 'localhost'
 
 - name: Get the local hostname (long)
   shell: hostname
-  connection: local
+  delegate_to: localhost
   register: host_long
   when: inventory_hostname == 'localhost'
 

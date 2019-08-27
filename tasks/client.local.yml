@@ -13,19 +13,19 @@
   file:
     path: "{{ profile_path }}"
     state: touch
-  connection: local
+  delegate_to: localhost
 
 - name: Get status of /opt
   stat:
     path: /opt
-  connection: local
+  delegate_to: localhost
   register: stat_opt_path
 
 - name: Create /opt when it does not exist
   file:
     path: /opt
     state: directory
-  connection: local
+  delegate_to: localhost
   become: true
   when: (stat_opt_path.stat.exists is defined and not stat_opt_path.stat.exists)
 
@@ -33,14 +33,14 @@
   file:
     path: "{{ oracle_path }}"
     state: absent
-  connection: local
+  delegate_to: localhost
   become: true
 
 - name: Create folders
   file:
     path: "{{ oracle_path }}"
     state: directory
-  connection: local
+  delegate_to: localhost
   become: true
 
 - name: Unarchive client files
@@ -49,7 +49,7 @@
     dest: "{{ oracle_path }}"
   with_items: "{{ filenames }}"
   when: arch is defined
-  connection: local
+  delegate_to: localhost
   become: true
 
 - name: Link base folders
@@ -60,11 +60,11 @@
   with_items:
     - { src: "./{{ unzip_path }}", dest: "{{ instantclient_path }}" }
     - { src: "./instantclient/sdk/include", dest: "{{ oracle_include_path }}" }
-  connection: local
+  delegate_to: localhost
   become: true
 
 - name: Link libraries to give versionless file
-  connection: local
+  delegate_to: localhost
   file:
     src: "./{{ item }}.{{ libtype }}.{{ version_cfg.link }}"
     dest: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
@@ -73,7 +73,7 @@
   become: true
 
 - name: Link libraries to /usr/local/lib
-  connection: local
+  delegate_to: localhost
   file:
     src: "{{ instantclient_path }}/{{ item }}.{{ libtype }}"
     dest: "/usr/local/lib/{{ item }}.{{ libtype }}"
@@ -81,7 +81,7 @@
   with_items: "{{ linked_libraries }}"
 
 - name: Make TNS_ADMIN directory
-  connection: local
+  delegate_to: localhost
   file:
     path: "{{ tns_admin_path }}"
     state: directory
@@ -90,7 +90,7 @@
 - name: Get status of {{ tnsnames_path }}
   stat:
     path: "{{ tnsnames_path }}"
-  connection: local
+  delegate_to: localhost
   register: stat_tnsnames
 
 - name: Link {{ tnsnames_path }}
@@ -99,17 +99,17 @@
     dest: "{{ tns_admin_path }}/tnsnames.ora"
     state: link
   when: (stat_tnsnames.stat.exists is defined and not stat_tnsnames.stat.exists)
-  connection: local
+  delegate_to: localhost
   become: true
 
 - name: Get status of {{ sqlnet_path }}
   stat:
     path: "{{ sqlnet_path }}"
-  connection: local
+  delegate_to: localhost
   register: stat_sqlnet
 
 - name: Link {{ sqlnet_path }}
-  connection: local
+  delegate_to: localhost
   file:
     src: "{{ sqlnet_path }}"
     dest: "{{ tns_admin_path }}/sqlnet.ora"
@@ -136,7 +136,7 @@
     sudoers_file: "/etc/sudoers"
 
 - name: Define libraries in {{ rc_file }}
-  connection: local
+  delegate_to: localhost
   blockinfile:
     dest: "{{ rc_file }}"
     block: |
@@ -156,7 +156,7 @@
   when: rc_file is defined and shell_type | length > 0
 
 - name: Define libraries in {{ profile_path }}
-  connection: local
+  delegate_to: localhost
   blockinfile:
     dest: "{{ profile_path }}"
     block: |
@@ -176,7 +176,7 @@
   when: profile_path is defined
 
 - name: Define libraries in {{ sudoers_file }}
-  connection: local
+  delegate_to: localhost
   blockinfile:
     dest: "{{ sudoers_file }}"
     block: |
