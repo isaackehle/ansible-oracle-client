@@ -22,7 +22,7 @@ Example Layout:
 
 ```yaml
 - hosts: all
-  gather_facts: "{{ inventory_hostname != 'localhost' }}"
+  gather_facts: inventory_hostname != 'localhost'
   vars:
     oracle_clients: ~/Downloads/oracle/client
   roles:
