@@ -54,5 +54,5 @@ Download [Instant Client from Oracle](http://www.oracle.com/technetwork/database
 
 #### Official OracleDB Node Package
 
-- [oracle instal osx](https://github.com/oracle/node-oracledb/blob/master/INSTALL.md#instosx)
+- [oracle install osx](https://github.com/oracle/node-oracledb/blob/master/INSTALL.md#instosx)
 - [oracle examples](https://github.com/oracle/node-oracledb/tree/master/examples)
