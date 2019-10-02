@@ -65,5 +65,7 @@
     - { src: ../templates/oracle.conf.j2, dest: /etc/ld.so.conf.d/oracle.conf }
     - { src: ../templates/oracle.sh.j2, dest: /etc/profile.d/oracle.sh }
 
-- shell: ldconfig
+- name: Configure dynamic linker run-time bindings
+  command: ldconfig
   become: true
+  when: true
