@@ -29,6 +29,13 @@ Example Layout:
     - { role: pgkehle.oracle-client }
 ```
 
+## Linting
+
+```bash
+yamllint -c yamllint.yaml .
+ansible-lint .
+```
+
 ## License
 
 MIT
