@@ -2,7 +2,7 @@
 
 Setup Oracle client/library files
 
-Available on Ansible Galaxy: [pgkehle.oracle-client](https://galaxy.ansible.com/pgkehle/oracle-client)
+Available on Ansible Galaxy: [isaackehle.oracle-client](https://galaxy.ansible.com/isaackehle/oracle-client)
 
 ## Variables
 
@@ -26,7 +26,7 @@ Example Layout:
   vars:
     oracle_clients: ~/Downloads/oracle/client
   roles:
-    - { role: pgkehle.oracle-client }
+    - { role: isaackehle.oracle-client }
 ```
 
 ## Linting
@@ -42,8 +42,8 @@ MIT
 
 ## Author Information
 
-Paul Kehle  
-@pgkehle ([twitter](https://twitter.com/pgkehle), [github](https://github.com/pgkehle), [linkedin](https://www.linkedin.com/in/pgkehle))
+Isaac Kehle
+@isaackehle ([twitter](https://twitter.com/isaackehle), [github](https://github.com/isaackehle), [linkedin](https://www.linkedin.com/in/isaackehle))
 
 ### References
 
